@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+
+# Build outputs
+dist/
+build/
+
+# Test coverage
+coverage/
+
+# VS Code settings
+.vscode/
+
+# System files
+.DS_Store
+
+# Logs
+*.log
