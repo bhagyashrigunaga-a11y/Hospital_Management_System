@@ -1,12 +1,8 @@
 import jwt from 'jsonwebtoken';
 import ApiError from '../utils/apiError.js';
 
-const jwtSecret = process.env.JWT_SECRET;
+const jwtSecret = process.env.JWT_SECRET || 'hospital-management-system-dev-secret';
 const jwtExpiresIn = process.env.JWT_EXPIRES_IN || '1d';
-
-if (!jwtSecret) {
-  throw new ApiError(500, 'JWT_SECRET is not defined in environment');
-}
 
 export function signToken(payload) {
   return jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiresIn });
