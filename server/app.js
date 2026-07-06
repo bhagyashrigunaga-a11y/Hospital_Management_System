@@ -7,6 +7,7 @@ import healthRoutes from './routes/health.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import doctorRoutes from './routes/doctor.routes.js';
 import patientRoutes from './routes/patient.routes.js';
+import appointmentRoutes from './routes/appointment.routes.js';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js';
 
 dotenv.config();
@@ -35,6 +36,7 @@ app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/patients', patientRoutes);
+app.use('/api/appointments', appointmentRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
