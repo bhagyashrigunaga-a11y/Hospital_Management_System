@@ -11,7 +11,7 @@ const appointmentSchema = new Schema(
     appointmentDate: { type: Date, required: true },
     appointmentTime: { type: String, required: true, trim: true },
     appointmentType: { type: String, enum: ['Online', 'Offline'], required: true },
-    reasonForVisit: { type: String, required: true, trim: true },
+    reason: { type: String, required: true, trim: true },
     status: { type: String, enum: ['Pending', 'Confirmed', 'Completed', 'Cancelled'], default: 'Pending' },
     notes: { type: String, trim: true, default: '' },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }

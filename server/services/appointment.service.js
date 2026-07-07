@@ -44,6 +44,12 @@ function normalizeAppointmentInput(data) {
     normalized.appointmentDate = new Date(data.appointmentDate);
   }
 
+  if (normalized.reason === undefined && data.reasonForVisit !== undefined) {
+    normalized.reason = data.reasonForVisit;
+  }
+
+  delete normalized.reasonForVisit;
+
   return normalized;
 }
 
@@ -165,6 +171,10 @@ export async function createAppointment(data, user) {
     throw new ApiError(400, 'Appointment date and time are required');
   }
 
+  if (user?.role === 'Patient') {
+    throw new ApiError(403, 'Patients cannot create appointments');
+  }
+
   const appointmentDateTime = buildAppointmentDateTime(normalizedData.appointmentDate, normalizedData.appointmentTime);
   if (appointmentDateTime < new Date()) {
     throw new ApiError(400, 'Appointment cannot be booked in the past');
@@ -200,9 +210,12 @@ export async function updateAppointment(id, data, user) {
   }
 
   const normalizedData = normalizeAppointmentInput(data);
+  const targetDoctor = normalizedData.doctor || appointment.doctor;
+  const targetDate = normalizedData.appointmentDate || appointment.appointmentDate;
+  const targetTime = normalizedData.appointmentTime || appointment.appointmentTime;
 
-  if (normalizedData.appointmentDate && normalizedData.appointmentTime) {
-    const appointmentDateTime = buildAppointmentDateTime(normalizedData.appointmentDate, normalizedData.appointmentTime);
+  if (normalizedData.appointmentDate || normalizedData.appointmentTime || normalizedData.doctor) {
+    const appointmentDateTime = buildAppointmentDateTime(targetDate, targetTime);
     if (appointmentDateTime < new Date()) {
       throw new ApiError(400, 'Appointment cannot be booked in the past');
     }
@@ -216,8 +229,8 @@ export async function updateAppointment(id, data, user) {
     await validateReference(normalizedData.doctor, Doctor, 'Doctor not found');
   }
 
-  if (normalizedData.doctor && normalizedData.appointmentDate && normalizedData.appointmentTime) {
-    await ensureNoDuplicateAppointment(normalizedData.doctor, normalizedData.appointmentDate, normalizedData.appointmentTime, id);
+  if (normalizedData.doctor || normalizedData.appointmentDate || normalizedData.appointmentTime) {
+    await ensureNoDuplicateAppointment(targetDoctor, targetDate, targetTime, id);
   }
 
   const updatedAppointment = await Appointment.findByIdAndUpdate(id, { ...normalizedData, updatedAt: new Date() }, {
