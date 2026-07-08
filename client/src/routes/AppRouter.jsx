@@ -7,6 +7,7 @@ import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Dashboard from '../pages/Dashboard';
 import AdminDashboard from '../pages/AdminDashboard';
+import AdminDashboardPage from '../pages/AdminDashboardPage';
 import DoctorDashboard from '../pages/DoctorDashboard';
 import PatientDashboard from '../pages/PatientDashboard';
 import ReceptionistDashboard from '../pages/ReceptionistDashboard';
@@ -44,7 +45,7 @@ export default function AppRouter() {
       >
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
         <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
         <Route path="/patient-dashboard" element={<PatientDashboard />} />
         <Route path="/receptionist-dashboard" element={<ReceptionistDashboard />} />
