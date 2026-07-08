@@ -50,7 +50,7 @@ export default function AppRouter() {
         <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
         <Route path="/doctor-dashboard" element={<DoctorPortal />} />
         <Route path="/patient-dashboard" element={<PatientPortal />} />
-        <Route path="/receptionist-dashboard" element={<ReceptionistDashboard />} />
+        <Route path="/receptionist-dashboard" element={<ReceptionistPortal />} />
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/patients" element={<Patients />} />
         <Route path="/appointments" element={<Appointments />} />
