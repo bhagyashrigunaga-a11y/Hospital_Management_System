@@ -24,6 +24,7 @@ import Inventory from '../pages/Inventory';
 import Profile from '../pages/Profile';
 import Settings from '../pages/Settings';
 import NotFound from '../pages/NotFound';
+import ReceptionistPortal from '../pages/ReceptionistPortal';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
@@ -50,7 +51,7 @@ export default function AppRouter() {
         <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
         <Route path="/doctor-dashboard" element={<DoctorPortal />} />
         <Route path="/patient-dashboard" element={<PatientPortal />} />
-        <Route path="/receptionist-dashboard" element={<ReceptionistPortal />} />
+<Route path="/receptionist-dashboard" element={<ReceptionistDashboard />} />
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/patients" element={<Patients />} />
         <Route path="/appointments" element={<Appointments />} />
