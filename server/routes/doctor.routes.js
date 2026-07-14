@@ -15,8 +15,16 @@ const router = Router();
 router.use(authMiddleware);
 router.get('/', getDoctors);
 router.get('/:id', getDoctorById);
-router.post('/', authorize('Admin'), createDoctorValidator, createDoctor);
-router.put('/:id', authorize('Admin'), updateDoctorValidator, updateDoctor);
-router.delete('/:id', authorize('Admin'), deleteDoctor);
-
+router.post('/', authorize('Admin', 'Doctor'), createDoctorValidator, createDoctor);
+router.put(
+  '/:id',
+  authorize('Admin', 'Doctor'),
+  updateDoctorValidator,
+  updateDoctor
+);
+router.delete(
+  '/:id',
+  authorize('Admin', 'Doctor'),
+  deleteDoctor
+);
 export default router;
