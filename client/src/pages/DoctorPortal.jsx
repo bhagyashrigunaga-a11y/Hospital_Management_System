@@ -63,7 +63,9 @@ export default function DoctorPortal() {
               {todayAppointments.map((item) => (
                 <div key={item.id || item._id} className="flex items-center justify-between rounded-2xl border border-slate-200 p-3 dark:border-slate-800">
                   <div>
-                    <p className="font-medium">{item.patient?.name || item.patient}</p>
+<p className="font-medium">
+  {item.patient?.fullName || "Unknown Patient"}
+</p>
                     <p className="text-sm text-slate-500 dark:text-slate-400">{item.time || item.date} • {item.type || 'Consultation'}</p>
                   </div>
                   <StatusBadge status={item.status || 'Scheduled'} />
@@ -79,8 +81,9 @@ export default function DoctorPortal() {
               {upcomingAppointments.map((item) => (
                 <div key={item.id || item._id} className="flex items-center justify-between rounded-2xl border border-slate-200 p-3 dark:border-slate-800">
                   <div>
-                    <p className="font-medium">{item.patient?.name || item.patient}</p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">{item.time || item.date} • {item.type || 'Consultation'}</p>
+<p className="font-medium">
+{item.patient?.fullName || item.patient?.name || "Unknown Patient"}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{item.appointmentTime || item.time} • {item.type || 'Consultation'}</p>
                   </div>
                   <StatusBadge status={item.status || 'Scheduled'} />
                 </div>
@@ -97,7 +100,9 @@ export default function DoctorPortal() {
               {patientList.map((patient) => (
                 <div key={patient.id || patient._id} className="rounded-2xl border border-slate-200 p-3 dark:border-slate-800">
                   <div className="flex items-center justify-between">
-                    <p className="font-medium">{patient.name || '—'}</p>
+                    <p className="font-medium">
+  {patient.fullName || patient.name || "—"}
+</p>
                     <StatusBadge status={patient.status || 'Stable'} />
                   </div>
                   <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{patient.condition || '—'}</p>

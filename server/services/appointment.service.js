@@ -97,29 +97,19 @@ async function validateReference(id, model, errorMessage) {
 }
 
 export async function getAppointments(query = {}, user = null) {
+  console.log("Logged User:", user);
+  console.log("Role:", user?.role);
   const filter = buildAppointmentFilter(query);
 
-  if (user?.role === 'Patient') {
-    const patient = await resolveVisiblePatient(user);
-    if (!patient) {
-      return [];
-    }
-    filter.patient = patient._id;
-  }
+  const appointments = await Appointment.find(filter)
+  .populate("patient", "patientId fullName email")
+  .populate("doctor", "fullName email")
+  .populate("createdBy", "name email role")
+  .sort({ appointmentDate: 1, appointmentTime: 1 });
 
-  if (user?.role === 'Doctor') {
-    const doctor = await resolveVisibleDoctor(user);
-    if (!doctor) {
-      return [];
-    }
-    filter.doctor = doctor._id;
-  }
-
-  return Appointment.find(filter)
-    .populate('patient', 'patientId fullName email')
-    .populate('doctor', 'fullName email')
-    .populate('createdBy', 'name email role')
-    .sort({ appointmentDate: 1, appointmentTime: 1 });
+console.log("Appointments Count:", appointments.length);
+console.log(appointments);
+return appointments;
 }
 
 export async function getAppointmentById(id, user = null) {
@@ -255,19 +245,9 @@ export async function deleteAppointment(id, user) {
     throw new ApiError(404, 'Appointment not found');
   }
 
-  if (appointment.status === 'Cancelled') {
-    return appointment;
-  }
+ await Appointment.findByIdAndDelete(id);
 
-  if (appointment.status === 'Completed') {
-    throw new ApiError(400, 'Completed appointments cannot be cancelled');
-  }
-
-  const cancelledAppointment = await Appointment.findByIdAndUpdate(
-    id,
-    { status: 'Cancelled', notes: appointment.notes ? `${appointment.notes}\nCancelled by ${user?.name || 'system'}` : `Cancelled by ${user?.name || 'system'}` },
-    { new: true, runValidators: true }
-  ).populate('patient', 'patientId fullName email').populate('doctor', 'fullName email').populate('createdBy', 'name email role');
-
-  return cancelledAppointment;
+return {
+  message: "Appointment deleted successfully"
+};
 }

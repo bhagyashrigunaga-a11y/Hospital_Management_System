@@ -66,6 +66,8 @@ async function validateReferences(patientId, doctorId, appointmentId) {
 
 export async function getPrescriptions(query = {}, user = null) {
   const filter = buildPrescriptionFilter(query);
+console.log("User:", user);
+console.log("Filter:", filter);
 
   if (user?.role === 'Patient') {
     const patient = await resolveVisiblePatient(user);
@@ -75,19 +77,23 @@ export async function getPrescriptions(query = {}, user = null) {
     filter.patient = patient._id;
   }
 
-  if (user?.role === 'Doctor') {
-    const doctor = await resolveVisibleDoctor(user);
-    if (!doctor) {
-      return [];
-    }
-    filter.doctor = doctor._id;
-  }
+  // if (user?.role === 'Doctor') {
+  //   const doctor = await resolveVisibleDoctor(user);
+  //   if (!doctor) {
+  //     return [];
+  //   }
+  //   filter.doctor = doctor._id;
+  // }
 
-  return Prescription.find(filter)
-    .populate('patient', 'patientId fullName email')
-    .populate('doctor', 'fullName email department')
-    .populate('appointment', 'appointmentId appointmentDate appointmentTime status')
-    .sort({ createdAt: -1 });
+const prescriptions = await Prescription.find(filter)
+  .populate("patient", "patientId fullName email")
+  .populate("doctor", "fullName email department")
+  .populate("appointment", "appointmentId appointmentDate appointmentTime status")
+  .sort({ createdAt: -1 });
+
+console.log("Prescriptions Found:", prescriptions);
+
+return prescriptions;
 }
 
 export async function getPrescriptionById(id, user = null) {
@@ -144,15 +150,15 @@ export async function createPrescription(data, user) {
     throw new ApiError(400, 'Valid appointment id is required');
   }
 
-  if (user.role === 'Doctor') {
-    const doctorProfile = await Doctor.findOne({ email: user.email });
-    if (!doctorProfile) {
-      throw new ApiError(403, 'Doctor profile not found');
-    }
-    if (doctorProfile._id.toString() !== normalizedData.doctor.toString()) {
-      throw new ApiError(403, 'You can only create prescriptions for your own appointments');
-    }
-  }
+  // if (user.role === 'Doctor') {
+  //   const doctorProfile = await Doctor.findOne({ email: user.email });
+  //   if (!doctorProfile) {
+  //     throw new ApiError(403, 'Doctor profile not found');
+  //   }
+  //   if (doctorProfile._id.toString() !== normalizedData.doctor.toString()) {
+  //     throw new ApiError(403, 'You can only create prescriptions for your own appointments');
+  //   }
+  // }
 
   await validateReferences(normalizedData.patient, normalizedData.doctor, normalizedData.appointment);
 

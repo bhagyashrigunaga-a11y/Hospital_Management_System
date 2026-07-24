@@ -15,8 +15,23 @@ const router = Router();
 router.use(authMiddleware);
 router.get('/', getAppointments);
 router.get('/:id', getAppointmentById);
-router.post('/', authorize('Admin', 'Receptionist'), createAppointmentValidator, createAppointment);
-router.put('/:id', authorize('Admin', 'Receptionist'), updateAppointmentValidator, updateAppointment);
-router.delete('/:id', authorize('Admin', 'Receptionist'), deleteAppointment);
+router.post(
+  '/',
+  authorize('Admin', 'Receptionist', 'Doctor'),
+  createAppointmentValidator,
+  createAppointment
+);
 
+router.put(
+  '/:id',
+  authorize('Admin', 'Receptionist', 'Doctor'),
+  updateAppointmentValidator,
+  updateAppointment
+);
+
+router.delete(
+  '/:id',
+  authorize('Admin', 'Receptionist', 'Doctor'),
+  deleteAppointment
+);
 export default router;

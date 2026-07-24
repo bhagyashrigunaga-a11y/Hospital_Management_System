@@ -104,20 +104,27 @@ export async function getBills(query = {}, user = null) {
     filter.patient = patient._id;
   }
 
-  if (user?.role === 'Doctor') {
-    const doctor = await resolveVisibleDoctor(user);
-    if (!doctor) {
-      return [];
-    }
-    filter.doctor = doctor._id;
-  }
+  // if (user?.role === 'Doctor') {
+  //   const doctor = await resolveVisibleDoctor(user);
+  //   if (!doctor) {
+  //     return [];
+  //   }
+  //   filter.doctor = doctor._id;
+  // }
 
-  return Bill.find(filter)
-    .populate('patient', 'patientId fullName email')
-    .populate('appointment', 'appointmentId appointmentDate appointmentTime status')
-    .populate('doctor', 'fullName email department')
-    .populate('createdBy', 'name email role')
-    .sort({ createdAt: -1 });
+  console.log("User:", user);
+console.log("Filter:", filter);
+
+const bills = await Bill.find(filter)
+  .populate("patient", "patientId fullName email")
+  .populate("appointment", "appointmentId appointmentDate appointmentTime status")
+  .populate("doctor", "fullName email department")
+  .populate("createdBy", "name email role")
+  .sort({ createdAt: -1 });
+
+console.log("Bills Found:", bills);
+
+return bills;
 }
 
 export async function getBillById(id, user = null) {
@@ -157,9 +164,9 @@ export async function getBillById(id, user = null) {
 }
 
 export async function createBill(data, user) {
-  if (!user || !['Admin', 'Receptionist'].includes(user.role)) {
-    throw new ApiError(403, 'You do not have permission to create bills');
-  }
+if (!user || !['Admin', 'Receptionist', 'Doctor'].includes(user.role)) {
+  throw new ApiError(403, 'You do not have permission to create bills');
+}
 
   const normalizedData = normalizeBillInput(data);
 
@@ -192,7 +199,7 @@ export async function updateBill(id, data, user) {
     throw new ApiError(400, 'Invalid bill id');
   }
 
-  if (!user || !['Admin', 'Receptionist'].includes(user.role)) {
+  if (!user || !['Admin', 'Receptionist', 'Doctor'].includes(user.role)) {
     throw new ApiError(403, 'You do not have permission to update bills');
   }
 
@@ -248,7 +255,7 @@ export async function deleteBill(id, user) {
     throw new ApiError(400, 'Invalid bill id');
   }
 
-  if (!user || !['Admin', 'Receptionist'].includes(user.role)) {
+  if (!user || !['Admin', 'Receptionist', 'Doctor'].includes(user.role)) {
     throw new ApiError(403, 'You do not have permission to delete bills');
   }
 

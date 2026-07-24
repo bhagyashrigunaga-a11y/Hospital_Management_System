@@ -168,10 +168,14 @@ export default function AdminDashboardPage() {
           {appointmentsLoading ? <div className="space-y-3">{[...Array(3)].map((_, index) => <SkeletonBlock key={index} className="h-12" />)}</div> : appointmentsError ? renderError(appointmentsError) : filteredAppointments.length === 0 ? renderEmpty('No appointments match this search.') : (
             <div className="space-y-3">
               {pagedAppointments.map((item, index) => (
-                <div key={`${item.patient}-${index}`} className="flex items-center justify-between rounded-2xl border border-slate-200 p-3 dark:border-slate-800">
+                <div key={item._id} className="flex items-center justify-between rounded-2xl border border-slate-200 p-3 dark:border-slate-800">
                   <div>
-                    <p className="font-medium">{item.patient?.name || item.patient}</p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">{item.doctor?.name || item.doctor} • {item.time || item.date}</p>
+<p className="font-medium">
+  {item.patient?.fullName || "Unknown Patient"}
+</p>
+<p className="text-sm text-slate-500 dark:text-slate-400">
+  {item.doctor?.fullName} • {item.appointmentTime}
+</p>
                   </div>
                   <StatusBadge status={item.status || 'Scheduled'} />
                 </div>
@@ -191,9 +195,9 @@ export default function AdminDashboardPage() {
           {patientsLoading ? <div className="space-y-3">{[...Array(3)].map((_, index) => <SkeletonBlock key={index} className="h-12" />)}</div> : patientsError ? renderError(patientsError) : patients.length ? (
             <div className="space-y-3">
               {(patients.slice(0, 4)).map((patient, index) => (
-                <div key={`${patient.name}-${index}`} className="rounded-2xl border border-slate-200 p-3 dark:border-slate-800">
+                <div key={`${patient.fullName}-${index}`} className="rounded-2xl border border-slate-200 p-3 dark:border-slate-800">
                   <div className="flex items-center justify-between">
-                    <p className="font-medium">{patient.name || '—'}</p>
+                    <p className="font-medium">{patient.fullName || '—'}</p>
                     <StatusBadge status={patient.status || 'Stable'} />
                   </div>
                   <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{patient.condition || '—'} • {patient.age ? `${patient.age} years` : '—'}</p>

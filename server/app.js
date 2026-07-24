@@ -5,13 +5,6 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import healthRoutes from './routes/health.routes.js';
 import authRoutes from './routes/auth.routes.js';
-import doctorRoutes from './routes/doctor.routes.js';
-import patientRoutes from './routes/patient.routes.js';
-import appointmentRoutes from './routes/appointment.routes.js';
-import billRoutes from './routes/bill.routes.js';
-import prescriptionRoutes from './routes/prescription.routes.js';
-import laboratoryRoutes from './routes/laboratory.routes.js';
-import medicineRoutes from './routes/medicine.routes.js';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js';
 
 dotenv.config();
@@ -21,8 +14,8 @@ const app = express();
 app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    credentials: true,
+    origin: process.env.CORS_ORIGIN || '*',
+    credentials: true
   })
 );
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
@@ -38,13 +31,6 @@ app.get('/', (req, res) => {
 
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/doctors', doctorRoutes);
-app.use('/api/patients', patientRoutes);
-app.use('/api/appointments', appointmentRoutes);
-app.use('/api/bills', billRoutes);
-app.use('/api/prescriptions', prescriptionRoutes);
-app.use('/api/laboratory', laboratoryRoutes);
-app.use('/api/medicines', medicineRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

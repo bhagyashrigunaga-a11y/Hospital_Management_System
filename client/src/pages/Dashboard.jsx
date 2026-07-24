@@ -1,15 +1,40 @@
 import React from 'react';
 import { StatCard, PanelCard } from '../components/Cards';
 import { DataTable } from '../components/Tables';
+import { useApiData } from "../hooks/useApiData";
 
 export default function Dashboard() {
+  const { data, loading, error } = useApiData("/dashboard");
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard title="Patients Today" value="128" detail="+12% from yesterday" tone="blue" />
-        <StatCard title="Appointments" value="42" detail="8 confirmed today" tone="green" />
-        <StatCard title="Revenue" value="$84.2k" detail="Monthly outlook" tone="amber" />
-        <StatCard title="Pending Reviews" value="17" detail="3 critical tasks" tone="rose" />
+        <StatCard
+  title="Doctors"
+  value={loading ? "..." : data?.totalDoctors || 0}
+  detail="Total Doctors"
+  tone="blue"
+/>
+
+<StatCard
+  title="Patients"
+  value={loading ? "..." : data?.totalPatients || 0}
+  detail="Total Patients"
+  tone="green"
+/>
+
+<StatCard
+  title="Appointments"
+  value={loading ? "..." : data?.totalAppointments || 0}
+  detail="Total Appointments"
+  tone="amber"
+/>
+
+<StatCard
+  title="Bills"
+  value={loading ? "..." : data?.totalBills || 0}
+  detail="Total Bills"
+  tone="rose"
+/>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
@@ -31,23 +56,31 @@ export default function Dashboard() {
         </PanelCard>
 
         <PanelCard title="Upcoming Schedule" action={<span className="text-sm text-blue-600">Today</span>}>
-          <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
-            <li className="rounded-xl border border-slate-200 p-3 dark:border-slate-800">09:00 — Dr. Amelia checks 3 patients</li>
-            <li className="rounded-xl border border-slate-200 p-3 dark:border-slate-800">11:30 — Lab samples collection</li>
-            <li className="rounded-xl border border-slate-200 p-3 dark:border-slate-800">15:00 — Billing review meeting</li>
-          </ul>
+          <ul className="space-y-3 text-sm text-slate-300">
+  {(data?.recentAppointments || []).map((appointment) => (
+    <li
+      key={appointment._id}
+      className="rounded-xl border border-slate-700 p-3"
+    >
+      {appointment.appointmentTime} —{" "}
+      {appointment.doctor?.fullName} with{" "}
+      {appointment.patient?.fullName}
+    </li>
+  ))}
+</ul>
         </PanelCard>
       </div>
 
       <PanelCard title="Recent Appointments">
-        <DataTable
-          headers={['Patient', 'Doctor', 'Time', 'Status']}
-          rows={[
-            ['Ava Thompson', 'Dr. Rao', '09:30', 'Confirmed'],
-            ['Noah Lewis', 'Dr. Kim', '11:00', 'Pending'],
-            ['Mia Gomez', 'Dr. Singh', '13:15', 'Completed'],
-          ]}
-        />
+     <DataTable
+  headers={["Patient", "Doctor", "Time", "Status"]}
+  rows={(data?.recentAppointments || []).map((appointment) => [
+    appointment.patient?.fullName || "-",
+    appointment.doctor?.fullName || "-",
+    appointment.appointmentTime,
+    appointment.status,
+  ])}
+/>
       </PanelCard>
     </div>
   );

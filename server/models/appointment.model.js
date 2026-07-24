@@ -19,11 +19,24 @@ const appointmentSchema = new Schema(
   { timestamps: true }
 );
 
-appointmentSchema.pre('save', async function generateAppointmentId(next) {
-  if (!this.isNew || this.appointmentId) return next();
+appointmentSchema.pre("save", async function (next) {
+  if (!this.isNew || this.appointmentId) {
+    return next();
+  }
 
-  const count = await this.constructor.countDocuments();
-  this.appointmentId = `APT-${String(count + 1).padStart(6, '0')}`;
+  const lastAppointment = await this.constructor
+    .findOne({})
+    .sort({ appointmentId: -1 });
+
+  let nextNumber = 1;
+
+  if (lastAppointment && lastAppointment.appointmentId) {
+    nextNumber =
+      Number(lastAppointment.appointmentId.replace("APT-", "")) + 1;
+  }
+
+  this.appointmentId = `APT-${String(nextNumber).padStart(6, "0")}`;
+
   next();
 });
 

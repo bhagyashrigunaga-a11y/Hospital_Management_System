@@ -23,14 +23,14 @@ export function DataTable({ headers, rows }) {
               key={index}
               className="border-t border-slate-800 hover:bg-slate-900"
             >
-              {row.map((cell, cellIndex) => (
-                <td
-                  key={cellIndex}
-                  className="px-4 py-3 text-slate-300"
-                >
-                  {cell}
-                </td>
-              ))}
+             {row.map((cell, cellIndex) => (
+  <td
+    key={cellIndex}
+    className="px-4 py-3 text-slate-300"
+  >
+    {cell}
+  </td>
+))}
             </tr>
           ))}
         </tbody>
